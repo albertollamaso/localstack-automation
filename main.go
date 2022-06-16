@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/albertollamaso/localstack-automation/awslocalstack"
+	"github.com/albertollamaso/localstack-automation/common"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/joho/godotenv"
@@ -50,7 +51,7 @@ func AWSSecretManager() {
 	}
 
 	// List secrets
-	flagset := common.isFlagPassed("awssecretslist")
+	flagset := common.IsFlagPassed("awssecretslist")
 
 	if flagset {
 		total := awslocalstack.ListSecrets(svc)

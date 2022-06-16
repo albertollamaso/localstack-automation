@@ -60,16 +60,6 @@ OK		= echo ${TIME} ${GREEN}[ OK ]${CNone}
 FAIL	= (echo ${TIME} ${RED}[FAIL]${CNone} && false)
 
 # ====================================================================================
-# Actions
-
-# create-secrets:
-
-aws-list-secrets: ## List all AWS secrets from localstack
-	./bin/localstack-automation --awssecretslist
-
-# total-secrets:
-
-# ====================================================================================
 # Localstack
 .PHONY: localstack-install
 localstack-install: ## Install localstack

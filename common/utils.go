@@ -2,7 +2,7 @@ package common
 
 import "flag"
 
-func isFlagPassed(name string) bool {
+func IsFlagPassed(name string) bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
 		if f.Name == name {

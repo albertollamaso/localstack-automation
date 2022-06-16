@@ -60,6 +60,16 @@ OK		= echo ${TIME} ${GREEN}[ OK ]${CNone}
 FAIL	= (echo ${TIME} ${RED}[FAIL]${CNone} && false)
 
 # ====================================================================================
+# Actions
+
+# create-secrets:
+
+aws-list-secrets: ## List all AWS secrets from localstack
+	./bin/localstack-automation --awssecretslist
+
+# total-secrets:
+
+# ====================================================================================
 # Localstack
 .PHONY: localstack-install
 localstack-install: ## Install localstack
@@ -133,9 +143,6 @@ go-clean: ## Cleaning build cache
 	@echo "  >  Cleaning build cache"
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
 
-
-go-run: go-build ## Run Golang Application
-	$(GOCMD) run main.go
 
 # ====================================================================================
 # Help

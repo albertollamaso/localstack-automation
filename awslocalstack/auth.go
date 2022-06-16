@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
-func newSession() *session.Session {
+func NewAWSSession() *session.Session {
 	// Initialize a session
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String(os.Getenv("AWS_DEFAULT_REGION")),

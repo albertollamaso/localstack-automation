@@ -1,55 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/albertollamaso/localstack-automation/awslocalstack"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/joho/godotenv"
 )
 
-func ListSecrets(svc *secretsmanager.SecretsManager) {
+var (
+	TotalSecrets int
+	sess         *session.Session
+)
 
-	input := &secretsmanager.ListSecretsInput{}
-	result, err := svc.ListSecrets(input)
-
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case secretsmanager.ErrCodeInvalidParameterException:
-				fmt.Println(secretsmanager.ErrCodeInvalidParameterException, aerr.Error())
-			case secretsmanager.ErrCodeInvalidNextTokenException:
-				fmt.Println(secretsmanager.ErrCodeInvalidNextTokenException, aerr.Error())
-			case secretsmanager.ErrCodeInternalServiceError:
-				fmt.Println(secretsmanager.ErrCodeInternalServiceError, aerr.Error())
-			default:
-				fmt.Println(aerr.Error())
-			}
-		} else {
-			// Print the error, cast err to awserr.Error to get the Code and
-			// Message from an error.
-			fmt.Println(err.Error())
-		}
-	}
-
-	for _, secret := range result.SecretList {
-		name := *secret.Name
-		arn := *secret.ARN
-		createdDate := *secret.CreatedDate
-		lastChangedDate := *secret.LastChangedDate
-
-		fmt.Println("#--------------------------------------------------------------------------")
-		fmt.Println("Secret Name:", name)
-		fmt.Println("ARN:", arn)
-		fmt.Println("CreatedDate:", createdDate)
-		fmt.Println("LastChangedDate:", lastChangedDate)
-
-	}
-
-}
-
-func main() {
+func init() {
 
 	// load env vars
 	err := godotenv.Load()
@@ -57,7 +24,44 @@ func main() {
 		log.Println("Error loading .env file")
 	}
 
-	// sess := awslocalstack.
+	// Parse flags
+	flag.IntVar(&TotalSecrets, "awssecretstotal", 0, "Total number of AWS secrets to generate on localstack")
+	flag.Bool("awssecretslist", false, "List all secrets from AWS Secret Manager from localstack")
+	flag.Parse()
+
+	// create AWS session with localstack
+	sess = awslocalstack.NewAWSSession()
+
+}
+
+func AWSSecretManager() {
+
+	// Create service
 	svc := secretsmanager.New(sess)
-	ListSecrets(svc)
+
+	// Create secrets
+	if TotalSecrets > 0 {
+
+		for i := 1; i <= TotalSecrets; i++ {
+			awslocalstack.CreateSecrets(svc)
+		}
+
+		fmt.Println("Total AWS Secrets created: ", TotalSecrets)
+	}
+
+	// List secrets
+	flagset := common.isFlagPassed("awssecretslist")
+
+	if flagset {
+		total := awslocalstack.ListSecrets(svc)
+		fmt.Println("#-----------------------------------------")
+		fmt.Println("Total AWS Secrets in localstack: ", total)
+		fmt.Println("#-----------------------------------------")
+	}
+
+}
+
+func main() {
+	// Run AWS Secret Manager
+	AWSSecretManager()
 }

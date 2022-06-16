@@ -32,13 +32,22 @@ Then validate the AWS CLI connects to localstack with following command.
 
  `localstack-test-awscli`
 
+ ## GOLANG APP
 
-## Create randoms AWS Secrets in localstack
-#TODO: explanation
-
- `make aws-secrets.create --total 100`
-
- ## GOLANG
+Build the Application with the following command
+ 
  ```
- make go-run
+ make go-build
  ```
+
+ ## AWS SECRET MANAGER
+
+### Create random secrets
+
+ ```
+ ./bin/localstack-automation -awssecretstotal=1000
+ ```
+
+ ### List all secrets
+
+ `./bin/localstack-automation --awssecretslist`
